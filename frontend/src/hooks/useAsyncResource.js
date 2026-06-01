@@ -1,0 +1,25 @@
+import { useCallback, useEffect, useState } from "react";
+
+export function useAsyncResource(loader, dependencies = []) {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      setData(await loader());
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, dependencies);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  return { data, setData, loading, error, reload: load };
+}
