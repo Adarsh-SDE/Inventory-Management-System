@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     app_name: str = "Inventory Management API"
     debug: bool = False
     database_url: str = "postgresql+psycopg://inventory_user:inventory_password@localhost:5432/inventory_db"
-    cors_origins: str = "http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:3000"
+    cors_origins: str = "http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:3000,https://inventory-management-system-frontend-113k.onrender.com"
     cors_origin_regex: str | None = r"^http://localhost(:\d+)?$"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
