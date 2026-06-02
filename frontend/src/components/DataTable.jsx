@@ -4,7 +4,7 @@ import { StateBlock } from "./StateBlock.jsx";
 export function DataTable({ columns, rows, loading, error, emptyTitle, emptyDescription }) {
   if (loading) {
     return (
-      <div className="flex min-h-48 items-center justify-center rounded-md border border-slate-200">
+      <div className="surface-panel flex min-h-56 items-center justify-center">
         <Loader2 className="h-5 w-5 animate-spin text-primary-600" />
       </div>
     );
@@ -19,23 +19,23 @@ export function DataTable({ columns, rows, loading, error, emptyTitle, emptyDesc
   }
 
   return (
-    <div className="overflow-hidden rounded-md border border-slate-200 bg-white">
+    <div className="surface-panel overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-slate-200 text-sm">
-          <thead className="bg-primary-50">
+        <table className="min-w-full divide-y divide-line/80 text-sm">
+          <thead className="bg-white/70">
             <tr>
               {columns.map((column) => (
-                <th key={column.key} className="px-4 py-3 text-left font-semibold text-slate-600">
+                <th key={column.key} className="px-5 py-4 text-left text-xs font-bold uppercase tracking-[0.16em] text-muted">
                   {column.label}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-line/60">
             {rows.map((row) => (
-              <tr key={row.id} className="hover:bg-slate-50">
+              <tr key={row.id} className="bg-transparent transition hover:bg-white/60">
                 {columns.map((column) => (
-                  <td key={column.key} className="px-4 py-3 align-middle text-slate-700">
+                  <td key={column.key} className="px-5 py-4 align-middle text-ink">
                     {column.render ? column.render(row) : row[column.key]}
                   </td>
                 ))}

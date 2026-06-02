@@ -25,9 +25,9 @@ export function ToastProvider({ children }) {
           return (
             <div
               key={toast.id}
-              className="flex items-start gap-3 rounded-md border border-slate-200 bg-white px-4 py-3 text-sm shadow-line"
+              className="flex items-start gap-3 rounded-[22px] border border-line bg-paper/95 px-4 py-3 text-sm text-ink shadow-float backdrop-blur"
             >
-              <Icon className={toast.type === "error" ? "mt-0.5 h-4 w-4 text-red-500" : "mt-0.5 h-4 w-4 text-primary-600"} />
+              <Icon className={toast.type === "error" ? "mt-0.5 h-4 w-4 text-accent-600" : "mt-0.5 h-4 w-4 text-primary-600"} />
               <span>{toast.message}</span>
             </div>
           );

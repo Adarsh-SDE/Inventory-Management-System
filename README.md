@@ -271,6 +271,9 @@ Frontend:
 VITE_API_URL=http://localhost:8000
 ```
 
+Managed PostgreSQL providers such as Neon can use either `postgresql://...` or `postgresql+psycopg://...`.
+The backend normalizes those URLs for SQLAlchemy and Alembic automatically.
+
 ## Testing
 
 Backend tests use an in-memory SQLite database for fast unit-level and API-level validation:

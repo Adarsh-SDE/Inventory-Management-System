@@ -17,6 +17,8 @@ export function OrdersPage() {
   const { data: orders, loading, error, reload } = useAsyncResource(api.orders.list, []);
   const customersResource = useAsyncResource(() => api.customers.list(), []);
   const productsResource = useAsyncResource(() => api.products.list(), []);
+  const totalRevenue = orders.reduce((sum, order) => sum + Number(order.total_amount || 0), 0);
+  const atRiskProducts = productsResource.data.filter((product) => product.quantity < 10).length;
 
   async function submit(event) {
     event.preventDefault();
@@ -73,27 +75,59 @@ export function OrdersPage() {
 
   return (
     <div className="grid gap-6">
-      <PageHeader title="Orders" description="Create orders with backend-calculated totals and automatic stock reduction." />
-      <form onSubmit={submit} className="grid gap-4 rounded-md border border-slate-200 bg-white p-4 md:grid-cols-4">
-        <Field label="Customer">
-          <select className="focus-ring h-10 rounded-md border border-slate-200 bg-white px-3 text-sm" value={customerId} onChange={(event) => setCustomerId(event.target.value)}>
-            <option value="">Select customer</option>
-            {customersResource.data.map((customer) => <option key={customer.id} value={customer.id}>{customer.full_name}</option>)}
-          </select>
-        </Field>
-        <Field label="Product">
-          <select className="focus-ring h-10 rounded-md border border-slate-200 bg-white px-3 text-sm" value={productId} onChange={(event) => setProductId(event.target.value)}>
-            <option value="">Select product</option>
-            {productsResource.data.map((product) => <option key={product.id} value={product.id}>{product.name} ({product.quantity} left)</option>)}
-          </select>
-        </Field>
-        <Field label="Quantity">
-          <Input type="number" min="1" step="1" value={quantity} onChange={(event) => setQuantity(event.target.value)} />
-        </Field>
-        <div className="flex items-end">
-          <Button type="submit" className="w-full"><Plus className="h-4 w-4" />Create</Button>
-        </div>
-      </form>
+      <PageHeader title="Orders" description="Create orders with calculated totals, stock protection, and a clearer view of fulfillment pressure." />
+      <div className="grid gap-6 xl:grid-cols-[1.1fr,0.9fr]">
+        <form onSubmit={submit} className="surface-panel grid gap-5 p-6 md:grid-cols-2">
+          <div className="md:col-span-2">
+            <div className="page-kicker">Order desk</div>
+            <h2 className="section-title mt-2">Create a new order</h2>
+          </div>
+          <Field label="Customer">
+            <select className="field-select" value={customerId} onChange={(event) => setCustomerId(event.target.value)}>
+              <option value="">Select customer</option>
+              {customersResource.data.map((customer) => <option key={customer.id} value={customer.id}>{customer.full_name}</option>)}
+            </select>
+          </Field>
+          <Field label="Product">
+            <select className="field-select" value={productId} onChange={(event) => setProductId(event.target.value)}>
+              <option value="">Select product</option>
+              {productsResource.data.map((product) => <option key={product.id} value={product.id}>{product.name} ({product.quantity} left)</option>)}
+            </select>
+          </Field>
+          <Field label="Quantity">
+            <Input type="number" min="1" step="1" value={quantity} onChange={(event) => setQuantity(event.target.value)} />
+          </Field>
+          <div className="flex items-end">
+            <Button type="submit" className="w-full"><Plus className="h-4 w-4" />Create order</Button>
+          </div>
+        </form>
+
+        <section className="grid gap-4">
+          <article className="surface-panel p-6">
+            <div className="page-kicker">Order pulse</div>
+            <div className="mt-4 grid gap-4 sm:grid-cols-3 xl:grid-cols-1">
+              <div>
+                <div className="text-xs font-bold uppercase tracking-[0.16em] text-muted">Orders placed</div>
+                <div className="metric-value mt-2">{loading ? "-" : orders.length}</div>
+              </div>
+              <div>
+                <div className="text-xs font-bold uppercase tracking-[0.16em] text-muted">Order value</div>
+                <div className="metric-value mt-2">{loading ? "-" : currency(totalRevenue)}</div>
+              </div>
+              <div>
+                <div className="text-xs font-bold uppercase tracking-[0.16em] text-muted">Stock alerts</div>
+                <div className="metric-value mt-2">{productsResource.loading ? "-" : atRiskProducts}</div>
+              </div>
+            </div>
+          </article>
+          <article className="surface-panel bg-primary-700 p-6 text-paper">
+            <div className="page-kicker text-paper/60">Fulfillment note</div>
+            <p className="mt-3 text-sm leading-7 text-paper/75">
+              Orders reduce stock immediately, so the quantity shown in the product picker reflects the current live position after prior transactions.
+            </p>
+          </article>
+        </section>
+      </div>
       <DataTable columns={columns} rows={orders} loading={loading} error={error} emptyTitle="No orders yet" emptyDescription="Create an order once customers and products exist." />
     </div>
   );
